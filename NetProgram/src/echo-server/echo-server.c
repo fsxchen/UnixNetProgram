@@ -1,4 +1,5 @@
 #include "../lib/unp.h"
+#include <arpa/inet.h>
 
 int main(int argc, char const *argv[]) {
 	pid_t pid;
@@ -18,7 +19,7 @@ int main(int argc, char const *argv[]) {
 	serveraddr.sin_port = htons(9999);
 	bind(listenfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
 	listen(listenfd, 5);
-    printf("Listenning at %d\n", 9999);
+    printf("Listenning at %s:%d\n", inet_ntoa(serveraddr.sin_addr), 9999);
 
 	for (;;) {
 		len = sizeof(cliaddr);
