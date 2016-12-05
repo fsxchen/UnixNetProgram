@@ -1,11 +1,10 @@
-#include "unp.h"
 #include <stdio.h>
 #include <string.h> 
 #include <stdarg.h>
   
 /* ANSI标准形式的声明方式，括号内的省略号表示可选参数 */    
   
-void err_quit(char *msg, ... )    
+int demo(char *msg, ... )    
 {    
     va_list argp;                   /* 定义保存函数参数的结构 */    
     int argno = 0;                  /* 纪录参数个数 */    
@@ -24,5 +23,11 @@ void err_quit(char *msg, ... )
         argno++;    
     }    
     va_end( argp );                                   /* 将argp置为NULL */    
+    return 0;    
 }  
-
+  
+  
+void main( void )    
+{    
+	demo("DEMO", "This", "is", "a", "demo!" ,"333333", "/0");
+}    
