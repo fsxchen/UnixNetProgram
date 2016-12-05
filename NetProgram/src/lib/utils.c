@@ -15,6 +15,7 @@ void err_quit(const char *fmt, ... )
     printf(fmt, *args);   //直接传递给printf
 
     va_end(args);         //结束可变参数的获取
+	exit(2);
 }  
 
   
