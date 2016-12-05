@@ -5,24 +5,16 @@
   
 /* ANSI标准形式的声明方式，括号内的省略号表示可选参数 */    
   
-void err_quit(char *msg, ... )    
+/* ANSI标准形式的声明方式，括号内的省略号表示可选参数 */    
+  
+void err_quit(const char *fmt, ... )    
 {    
-    va_list argp;                   /* 定义保存函数参数的结构 */    
-    int argno = 0;                  /* 纪录参数个数 */    
-    char *para;                     /* 存放取出的字符串参数 */    
-      
-                                    /* argp指向传入的第一个可选参数，    msg是最后一个确定的参数 */    
-    va_start( argp, msg );    
-      
-    while (1)   
-    {    
-        para = va_arg( argp, char *);                 /*    取出当前的参数，类型为char *. */    
-        if ( strcmp( para, "/0") == 0 )    
-                                                      /* 采用空串指示参数输入结束 */    
-            break;    
-        printf("Parameter #%d is: %s/n", argno, para);    
-        argno++;    
-    }    
-    va_end( argp );                                   /* 将argp置为NULL */    
+	va_list args;         //定义一个va_list类型的变量，用来储存单个参数
+    va_start(args, fmt);  //使args指向可变参数的第一个参数
+
+    printf(fmt, *args);   //直接传递给printf
+
+    va_end(args);         //结束可变参数的获取
 }  
 
+  

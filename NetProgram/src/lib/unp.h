@@ -14,4 +14,4 @@
 #define MAXLINE 4096
 #endif
 
-void err_quit(char *format, ...);
+void err_quit(const char *fmt, ...);
