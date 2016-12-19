@@ -1,13 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <net/ethernet.h>
-#include <netinet/if_ether.h>
-// #include <netpacket/packet.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
 #include "arp_trickster.h"
 
 
