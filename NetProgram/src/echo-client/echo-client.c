@@ -19,6 +19,6 @@ int main(int argc, char const *argv[]) {
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_port = htons(SERVER_PORT)
+	servaddr.sin_port = htons(SERVER_PORT);
 
 }
