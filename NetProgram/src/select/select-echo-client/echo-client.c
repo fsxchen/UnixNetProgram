@@ -43,7 +43,7 @@ void str_cli(FILE *fp, int sockfd) {
 
 		if (FD_ISSET(sockfd, &rset)) {
 			// socket is ok
-			if (recv(sockfd, recvLine, 4096, 0) == 0) {
+			if (read(sockfd, recvLine, 4096) == 0) {
 				err_quit("server terminated permaturely");
 			}
 			fputs(recvLine, stdout);

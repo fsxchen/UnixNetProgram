@@ -1,4 +1,4 @@
-#include "../lib/unp.h"
+#include "../../lib/unp.h"
 #include "echo-server.h"
 #include <arpa/inet.h>
 
@@ -25,6 +25,20 @@ int main(int argc, char const *argv[]) {
 	for (;;) {
 		len = sizeof(cliaddr);
 		connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len);
+		if ((pid = fork()) == 0) {
+			// child
+			close(listenfd);
+			for(;;) {
+				bzero(buf, sizeof(buf));
+				int ret = recv(connfd, buf, sizeof(buf), 0);
+				writen(connfd, buf, sizeof(buf));
+
+				if (ret > 0) {
+					printf("%s", buf);
+				}
+
+			}
+		}
 		close(connfd);
 	}
     return 0;

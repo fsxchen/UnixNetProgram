@@ -1,7 +1,20 @@
 CC=gcc
 BUILD_PATH=../lib
-all: echo-server.c
-	${CC} -o echo-server echo-server.c ${BUILD_PATH}/arron.a
+SERVER_PATH=./select-echo-server
+CLIENT_PATH=./select-echo-client
+
+server:
+	@for ser in $$(ls ${SERVER_PATH}/echo-server*.c);\
+	do\
+		Filename=$${ser##*/};\
+		${CC} -o $${Filename%.*} $${ser} ${BUILD_PATH}/arron.a;\
+	done
+client:
+	@for ser in $$(ls ${SERVER_PATH}/echo-server*.c);\
+	do\
+		Filename=$${ser##*/};\
+		${CC} -o $${Filename%.*} $${ser} ${BUILD_PATH}/arron.a;\
+	done
 build:
 	cd ${BUILD_PATH} && find *.c | xargs gcc -c
 	cd ${BUILD_PATH} && ar -r arron.a *.o
