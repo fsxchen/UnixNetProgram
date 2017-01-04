@@ -10,10 +10,10 @@ server:
 		${CC} -o $${Filename%.*} $${ser} ${BUILD_PATH}/arron.a;\
 	done
 client:
-	@for ser in $$(ls ${SERVER_PATH}/echo-server*.c);\
+	@for cli in $$(ls ${CLIENT_PATH}/echo-client*.c);\
 	do\
-		Filename=$${ser##*/};\
-		${CC} -o $${Filename%.*} $${ser} ${BUILD_PATH}/arron.a;\
+		Filename=$${cli##*/};\
+		${CC} -o $${Filename%.*} $${cli} ${BUILD_PATH}/arron.a;\
 	done
 build:
 	cd ${BUILD_PATH} && find *.c | xargs gcc -c

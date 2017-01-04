@@ -3,15 +3,14 @@
 #include <arpa/inet.h>
 
 int main(int argc, char const *argv[]) {
-	pid_t pid;
-	int listenfd, connfd;
-    struct sockaddr_in serveraddr, cliaddr;
-	socklen_t len;
-
+	int i, maxi, maxfd, listenfd, confd, sockfd;
+	int clilen;
+	int nready, client[FD_SETSIZE];
+	size_t n;
+	fd_set rset, allset;
 	char buf[MAXLINE];
-    // if (argc != 2) {
-    //     err_quit("usage: tcpcli <IPaddress>\n");
-    // }
+    struct sockaddr_in serveraddr, cliaddr;
+
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
 	bzero(&serveraddr, sizeof(serveraddr));
@@ -22,24 +21,69 @@ int main(int argc, char const *argv[]) {
 	listen(listenfd, 5);
     printf("Listenning at %s:%d\n", inet_ntoa(serveraddr.sin_addr), 9999);
 
+	maxfd = listenfd;
+
+	maxi = -1;
+	for (i = 0; i < FD_SETSIZE; i++) {
+		client[i] = -1;
+	}
+	FD_ZERO(&allset);
+	FD_SET(listenfd, &allset);
+
 	for (;;) {
-		len = sizeof(cliaddr);
-		connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len);
-		if ((pid = fork()) == 0) {
-			// child
-			close(listenfd);
-			for(;;) {
-				bzero(buf, sizeof(buf));
-				int ret = recv(connfd, buf, sizeof(buf), 0);
-				writen(connfd, buf, sizeof(buf));
-
-				if (ret > 0) {
-					printf("%s", buf);
+		rset = allset;
+		nready = select(maxfd + 1, &rset, NULL, NULL, NULL);
+		printf("sssssssss\n");
+		if (FD_ISSET(listenfd, &rset)) {
+			clilen = sizeof(cliaddr);
+			confd = accept(listenfd, (SA *)&cliaddr, &clilen);
+			
+			for(i = 0; i < FD_SETSIZE; i++) {
+				if (client[i] < 0) {
+					client[i] = confd;
+					break;
 				}
+			}
+			printf("i is %d\n", i);
+			printf("aaaaaaaaaaaaaaaaaaa\n");
+			if (i == FD_SETSIZE)
+				err_quit("too many clients");
 
+			FD_SET(confd, &allset);
+
+			if (i > maxi)
+				maxi = i;
+
+			printf("nready is %d\n", nready);
+
+			if (--nready <= 0){
+				printf("hahaha");
+				continue;
 			}
 		}
-		close(connfd);
+		printf("====================");
+		for (i = 0; i <= maxi; i++) {
+			printf(i);
+			printf("...\n");
+			if ((sockfd = client[i]) < 0)
+				continue;
+
+			if (FD_ISSET(sockfd, &rset)) {
+				if ((n = read(sockfd, buf, MAXLINE)) == 0) {
+					close(sockfd);
+					FD_CLR(sockfd, &allset);
+					client[i] = -1;
+				} else{
+					printf(buf);
+					printf("......\n");
+					writen(sockfd, buf, n);
+				}
+				if (--nready <= 0)
+					break;
+			}
+		}
 	}
+
+
     return 0;
 }

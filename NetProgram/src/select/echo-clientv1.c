@@ -31,40 +31,32 @@ void str_cli(FILE *fp, int sockfd) {
 	int maxfd, stdineof;
 	fd_set rset;
 	char buf[MAXLINE];
+	int n;
 	char sendLine[4096], recvLine[4096];
 	memset(sendLine, 0, 4096);
 	memset(recvLine, 0, 4096);
 	FD_ZERO(&rset);
-	int n;
+	
+	stdineof = 0;
 
 	for (;;) {
-		if (stdineof == 0) {
-			FD_SET(fileno(fp), &rset);
-		}
-
+		FD_SET(fileno(fp), &rset);
 		FD_SET(sockfd, &rset);
 		maxfd = max(fileno(fp), sockfd) + 1;
 		select(maxfd, &rset, NULL, NULL, NULL);
 
 		if (FD_ISSET(sockfd, &rset)) {
 			// socket is ok
-			if (read(sockfd, recvLine, MAXLINE) == 0) {
-				if (stdineof == 1)
-					return;
-				else
-					err_quit("server terminated permaturely");
+			if (read(sockfd, recvLine, 4096) == 0) {
+				err_quit("server terminated permaturely");
 			}
 			fputs(recvLine, stdout);
 		}
 
 		if (FD_ISSET(fileno(fp), &rset)) {
-			if ((n = read(fileno(fp), buf, MAXLINE)) == 0) {
-				stdineof = 1;
-				shutdown(sockfd, SHUT_WR);
-				FD_CLR(fileno(fp), &rset);
-				continue;
-			}
-			write(sockfd, sendLine, strlen(sendLine));
+			if(fgets(sendLine, 4096, fp) == NULL)
+				return;
+			send(sockfd, sendLine, strlen(sendLine), 0);
 		}
 	}
 }

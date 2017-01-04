@@ -15,3 +15,5 @@
 #endif
 
 void err_quit(const char *fmt, ...);
+
+typedef struct sockaddr SA;
